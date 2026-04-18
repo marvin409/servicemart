@@ -63,6 +63,18 @@ function buildReply(input, careers, premiumFee) {
       matches: []
     };
   }
+  if (query.includes("what") && query.includes("premium")) {
+    return {
+      text: `Premium fast hiring is a paid prioritization service. It helps workers get in front of employers faster for a fee of ${premiumFee}.`,
+      matches: roles.filter((career) => career.type.toLowerCase().includes("full")).slice(0, 3)
+    };
+  }
+  if (query.includes("kazi") && query.includes("premium")) {
+    return {
+      text: `twaweza kukuelezea kuhusu Premium fast hiring, ambayo ni huduma ya kulipia ili kupata nafasi za kazi haraka zaidi. Kwa ada ya ${premiumFee}, huduma hii inasaidia wafanyakazi kuonekana mbele ya waajiri kwa haraka zaidi.`,
+      matches: roles.filter((career) => career.type.toLowerCase().includes("full")).slice(0, 3)
+    };
+  }  
   if (query.includes("why") && query.includes("premium")) {
     return {
       text: `Premium fast hiring is a paid prioritization service. It helps workers get in front of employers faster for a fee of ${premiumFee}.`,
