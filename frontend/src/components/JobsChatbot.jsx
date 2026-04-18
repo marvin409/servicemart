@@ -51,8 +51,31 @@ function buildReply(input, careers, premiumFee) {
       matches: []
     };
   }
-
-  if (/(hello|hi|hey|good morning|good evening)/.test(query)) {
+  if (query.includes("help") || query.includes("what can you do")) {
+    return {
+      text: `I can answer questions about the ${roles.length} live openings. Try asking for remote roles, full-time jobs, a team like engineering, or how premium fast hiring works.`,
+      matches: []
+    };
+  }
+  if (query.includes("who are you") || query.includes("what are you")) {
+    return {
+      text: "I am the jobs assistant bot. I can help you find and apply to open roles, and explain how premium fast hiring works.",
+      matches: []
+    };
+  }
+  if (query.includes("why") && query.includes("premium")) {
+    return {
+      text: `Premium fast hiring is a paid prioritization service. It helps workers get in front of employers faster for a fee of ${premiumFee}.`,
+      matches: roles.filter((career) => career.type.toLowerCase().includes("full")).slice(0, 3)
+    };
+  }
+  if (query.includes("how") && query.includes("premium")) {
+    return {
+      text: `To use premium fast hiring, select the option when applying to a role. Pay the fee of ${premiumFee} to have your application surfaced faster to employers and high-intent opportunities.`,
+      matches: roles.filter((career) => career.type.toLowerCase().includes("full")).slice(0, 3)
+    };
+  }
+    if (/(hello|hi|hey|good morning|good evening)/.test(query)) {
     return {
       text: `I can help you scan ${roles.length} live openings. Ask for remote roles, full-time jobs, a team like engineering, or how premium fast hiring works.`,
       matches: roles.slice(0, 3)
