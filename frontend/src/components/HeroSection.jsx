@@ -7,23 +7,24 @@ function Stat({ value, label }) {
   );
 }
 
-function HeroSection({ careersCount, employerUrl, providerCount }) {
+function HeroSection({ careersCount, employerUrl, providerCount, labels }) {
+  const careersHref = employerUrl || "#careers";
+
   return (
-    <section className="hero">
+    <section className="hero" id="top">
       <div className="hero-copy">
-        <p className="eyebrow">Premium Local Marketplace</p>
+        <p className="eyebrow">{labels.heroEyebrow}</p>
         <h1>Service Mart</h1>
         <p className="hero-subtitle">
-          A premium service marketplace connecting people to trusted nearby providers,
-          instant booking flows, verified reviews, and employer careers in one polished platform.
+          {labels.heroSubtitle}
         </p>
         <div className="hero-actions">
           <a href="#discover" className="button primary">Discover services</a>
           <a
-            href={employerUrl || "https://example.com/careers"}
+            href={careersHref}
             className="button secondary"
-            target="_blank"
-            rel="noreferrer"
+            target={employerUrl ? "_blank" : undefined}
+            rel={employerUrl ? "noreferrer" : undefined}
           >
             Employer careers
           </a>

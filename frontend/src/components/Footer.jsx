@@ -1,9 +1,9 @@
-function Footer() {
+function Footer({ labels }) {
   return (
     <footer className="site-footer">
-      <p>Developed by Marvin Ochieng</p>
+      <p>{labels.footerDeveloper}</p>
       <a href="https://instagram.com/nai.raw.b3rry" target="_blank" rel="noreferrer">
-        Instagram: @nai.raw.b3rry
+        {labels.footerInstagram}
       </a>
     </footer>
   );

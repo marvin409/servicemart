@@ -9,7 +9,7 @@ function ProviderDetailSection({
 }) {
   if (!provider) {
     return (
-      <section className="panel provider-detail">
+      <section className="panel provider-detail" id="provider">
         <div className="empty-state">
           <h2>No providers match the current filters.</h2>
           <p>Try a broader search or switch categories.</p>
@@ -19,7 +19,7 @@ function ProviderDetailSection({
   }
 
   return (
-    <section className="panel provider-detail">
+    <section className="panel provider-detail" id="provider">
       <div className="section-head">
         <div>
           <p className="eyebrow">{provider.service_type}</p>
