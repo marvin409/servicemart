@@ -1,0 +1,9 @@
+Options +ExecCGI
+AddHandler cgi-script .cgi
+DirectoryIndex disabled
+RewriteEngine On
+RewriteRule ^application\.cgi($|/) - [L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^$ application.cgi/ [QSA,L]
+RewriteRule ^(.*)$ application.cgi/$1 [QSA,L]

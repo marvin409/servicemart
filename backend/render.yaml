@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: service-mart-api
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn wsgi:app
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:///servicemart.db
+      - key: EMPLOYER_URL
+        value: https://example.com/careers
+      - key: FRONTEND_URL
+        value: http://localhost:5173
