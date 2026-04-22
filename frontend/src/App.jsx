@@ -10,6 +10,8 @@ import Navbar from "./components/Navbar";
 import TranslatorPanel from "./components/TranslatorPanel";
 import JobsChatbot from "./components/JobsChatbot";
 import AuthSection from "./components/AuthSection";
+import JobsBoardSection from "./components/JobsBoardSection";
+import NetworkHubSection from "./components/NetworkHubSection";
 import ToastStack from "./components/ToastStack";
 
 const defaultCoords = { lat: -1.286389, lng: 36.817223 };
@@ -31,7 +33,8 @@ const languageCopy = {
     heroSubtitle:
       "Service Mart helps clients hire faster, helps workers get discovered, and makes cross-border service work feel simple and trustworthy.",
     footerDeveloper: "Developed in Nairobi, Kenya by Marvin Ochieng",
-    footerInstagram: "Instagram: @nai.raw.b3rry"
+    footerInstagram: "Instagram: @nyalia.ke",
+    footerPhone: "Mobile: 0791019946"
   },
   es: {
     navMarketplace: "Mercado",
@@ -43,7 +46,8 @@ const languageCopy = {
     heroSubtitle:
       "Una plataforma global premium que conecta clientes, trabajadores, empleadores, contrataciones rapidas, resenas verificadas y oportunidades internacionales.",
     footerDeveloper: "Desarrollado en Nairobi, Kenia por Marvin Ochieng",
-    footerInstagram: "Instagram: @nai.raw.b3rry"
+    footerInstagram: "Instagram: @nyalia.ke",
+    footerPhone: "Mobile: 0791019946"
   },
   fr: {
     navMarketplace: "Marketplace",
@@ -55,7 +59,8 @@ const languageCopy = {
     heroSubtitle:
       "Une plateforme premium mondiale reliant clients, travailleurs, employeurs, recrutements rapides, avis verifies et opportunites internationales.",
     footerDeveloper: "Developpe a Nairobi, Kenya par Marvin Ochieng",
-    footerInstagram: "Instagram : @nai.raw.b3rry"
+    footerInstagram: "Instagram : @nyalia.ke",
+    footerPhone: "Mobile: 0791019946"
   },
   sw: {
     navMarketplace: "Soko",
@@ -67,7 +72,8 @@ const languageCopy = {
     heroSubtitle:
       "Jukwaa la hadhi ya juu linalounganisha wateja, wafanyakazi, waajiri, ajira za haraka, hakiki zilizothibitishwa na fursa za kimataifa.",
     footerDeveloper: "Imeundwa Nairobi, Kenya na Marvin Ochieng",
-    footerInstagram: "Instagram: @nai.raw.b3rry"
+    footerInstagram: "Instagram: @nyalia.ke",
+    footerPhone: "Mobile: 0791019946"
   }
 };
 
@@ -96,6 +102,8 @@ function HomePage({ careers, employerUrl, labels, providerCount, renderServiceNa
           <Link to="/auth" className="button primary">Account access</Link>
           <Link to="/marketplace" className="button secondary">Marketplace search</Link>
           <Link to="/providers" className="button ghost">Provider details</Link>
+          <Link to="/jobs" className="button secondary">Jobs board</Link>
+          <Link to="/network" className="button ghost">Network hub</Link>
           <Link to="/careers" className="button ghost">Careers hub</Link>
         </div>
       </section>
@@ -558,6 +566,14 @@ function AppShell() {
           <Route
             path="/careers"
             element={<CareersSection careers={careers} employerUrl={meta?.employer_url} />}
+          />
+          <Route
+            path="/jobs"
+            element={<JobsBoardSection employerUrl={meta?.employer_url} jobs={jobs.length > 0 ? jobs : careers} />}
+          />
+          <Route
+            path="/network"
+            element={<NetworkHubSection currentUser={currentUser} jobs={jobs.length > 0 ? jobs : careers} services={services} />}
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

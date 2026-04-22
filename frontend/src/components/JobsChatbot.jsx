@@ -273,7 +273,7 @@ function JobsChatbot({ careers, premiumFee = "$29", employerUrl }) {
                     {message.matches.slice(0, 3).map((career) => (
                       <a
                         key={career.id}
-                        href={career.apply_url || employerUrl || "#careers"}
+                        href={career.apply_url || employerUrl || "/careers"}
                         target={career.apply_url || employerUrl ? "_blank" : undefined}
                         rel={career.apply_url || employerUrl ? "noreferrer" : undefined}
                         className="chat-match-card"

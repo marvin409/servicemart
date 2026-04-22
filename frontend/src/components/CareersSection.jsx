@@ -1,7 +1,20 @@
+import { useState } from "react";
+
 function CareersSection({ careers, employerUrl }) {
-  const featuredCareer = careers[0];
-  const supportingCareers = careers.slice(1);
-  const careersHref = employerUrl || "#careers";
+  const [query, setQuery] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const careersHref = employerUrl || "/careers";
+
+  const normalizedQuery = query.trim().toLowerCase();
+  const filteredCareers = careers.filter((career) => {
+    const text = `${career.title} ${career.team} ${career.location} ${career.type} ${career.description}`.toLowerCase();
+    const queryMatches = !normalizedQuery || text.includes(normalizedQuery);
+    const typeMatches = typeFilter === "all" || career.type.toLowerCase().includes(typeFilter);
+    return queryMatches && typeMatches;
+  });
+
+  const featuredCareer = filteredCareers[0];
+  const supportingCareers = filteredCareers.slice(1);
 
   return (
     <section className="panel careers-panel" id="careers">
@@ -65,6 +78,28 @@ function CareersSection({ careers, employerUrl }) {
         </div>
       </div>
 
+      <div className="careers-filter-row">
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Search title, team, location..."
+        />
+        <div className="careers-filter-chips">
+          <button type="button" className={`stats-chip ${typeFilter === "all" ? "active" : ""}`} onClick={() => setTypeFilter("all")}>
+            All
+          </button>
+          <button type="button" className={`stats-chip ${typeFilter === "full" ? "active" : ""}`} onClick={() => setTypeFilter("full")}>
+            Full-time
+          </button>
+          <button type="button" className={`stats-chip ${typeFilter === "contract" ? "active" : ""}`} onClick={() => setTypeFilter("contract")}>
+            Contract
+          </button>
+          <button type="button" className={`stats-chip ${typeFilter === "remote" ? "active" : ""}`} onClick={() => setTypeFilter("remote")}>
+            Remote
+          </button>
+        </div>
+      </div>
+
       <div className="career-list">
         {supportingCareers.length > 0 ? supportingCareers.map((career) => (
           <article key={career.id} className="career-card">
@@ -73,7 +108,7 @@ function CareersSection({ careers, employerUrl }) {
             <p>{career.description}</p>
             <a href={career.apply_url} target="_blank" rel="noreferrer">Apply now</a>
           </article>
-        )) : careers.map((career) => (
+        )) : filteredCareers.map((career) => (
           <article key={career.id} className="career-card">
             <p className="career-meta">{career.team} - {career.location} - {career.type}</p>
             <h3>{career.title}</h3>

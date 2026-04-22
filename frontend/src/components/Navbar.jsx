@@ -18,6 +18,8 @@ function Navbar({ currentUser, employerUrl, labels, language, setLanguage, theme
         <div className="nav-links">
           <NavLink to="/marketplace">{labels.navMarketplace}</NavLink>
           <NavLink to="/providers">{labels.navBookings}</NavLink>
+          <NavLink to="/jobs">Jobs</NavLink>
+          <NavLink to="/network">Network</NavLink>
           <NavLink to="/careers">{labels.navCareers}</NavLink>
         </div>
       </div>
