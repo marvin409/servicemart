@@ -241,7 +241,7 @@ function AppShell() {
 
     try {
       const response = await fetch(apiUrl("/api/auth/me"), {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { "X-Auth-Token": token }
       });
       if (!response.ok) {
         clearSession();

@@ -193,6 +193,18 @@ def get_bearer_token(auth_header):
     return token or None
 
 
+def get_auth_token():
+    bearer_token = get_bearer_token(request.headers.get("Authorization", ""))
+    if bearer_token:
+        return bearer_token
+
+    explicit_token = request.headers.get("X-Auth-Token", "").strip()
+    if explicit_token:
+        return explicit_token
+
+    return None
+
+
 def register_routes(app):
     @app.get("/api/health")
     def health_check():
@@ -261,7 +273,7 @@ def register_routes(app):
 
     @app.get("/api/auth/me")
     def auth_me():
-        token = get_bearer_token(request.headers.get("Authorization", ""))
+        token = get_auth_token()
         if not token:
             return jsonify({"error": "Authorization token is required."}), 401
 
