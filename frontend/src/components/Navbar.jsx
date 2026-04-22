@@ -1,21 +1,24 @@
-function Navbar({ employerUrl, labels, language, setLanguage, theme, toggleTheme }) {
-  const careersHref = employerUrl || "#careers";
+import { Link, NavLink } from "react-router-dom";
+
+function Navbar({ currentUser, employerUrl, labels, language, setLanguage, theme, toggleTheme }) {
+  const careersHref = employerUrl || "/careers";
+  const isExternalCareers = Boolean(employerUrl);
 
   return (
     <nav className="top-nav">
-      <a href="#top" className="brand-lockup">
+      <Link to="/" className="brand-lockup">
         <span className="brand-mark">SM</span>
         <span className="brand-text">
           <strong>Service Mart</strong>
           <small>{labels.navSubtitle}</small>
         </span>
-      </a>
+      </Link>
 
       <div className="nav-center">
         <div className="nav-links">
-          <a href="#discover">{labels.navMarketplace}</a>
-          <a href="#provider">{labels.navBookings}</a>
-          <a href="#careers">{labels.navCareers}</a>
+          <NavLink to="/marketplace">{labels.navMarketplace}</NavLink>
+          <NavLink to="/providers">{labels.navBookings}</NavLink>
+          <NavLink to="/careers">{labels.navCareers}</NavLink>
         </div>
       </div>
 
@@ -37,19 +40,25 @@ function Navbar({ employerUrl, labels, language, setLanguage, theme, toggleTheme
         </div>
 
         <div className="nav-actions">
-          <a href="#auth" className="nav-text-link">
-            {labels.navLogin || "Log in"}
-          </a>
+          {currentUser ? (
+            <span className="nav-session">Hi, {currentUser.full_name}</span>
+          ) : (
+            <>
+              <Link to="/auth" className="nav-text-link">
+                {labels.navLogin || "Log in"}
+              </Link>
 
-          <a href="#auth" className="button primary nav-mini-cta">
-            {labels.navSignup || "Join free"}
-          </a>
+              <Link to="/auth" className="button primary nav-mini-cta">
+                {labels.navSignup || "Join free"}
+              </Link>
+            </>
+          )}
 
           <a
             href={careersHref}
             className="button ghost nav-cta"
-            target={employerUrl ? "_blank" : undefined}
-            rel={employerUrl ? "noreferrer" : undefined}
+            target={isExternalCareers ? "_blank" : undefined}
+            rel={isExternalCareers ? "noreferrer" : undefined}
           >
             {labels.navEmployer}
           </a>

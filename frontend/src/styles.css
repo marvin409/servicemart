@@ -168,8 +168,18 @@ textarea {
   background: rgba(255, 255, 255, 0.88);
 }
 
+.nav-links a.active {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: inset 0 0 0 1px rgba(17, 17, 17, 0.08);
+}
+
 :root[data-theme="dark"] .nav-links a:hover {
   background: rgba(255, 255, 255, 0.08);
+}
+
+:root[data-theme="dark"] .nav-links a.active {
+  background: rgba(255, 255, 255, 0.14);
 }
 
 .nav-tools {
@@ -196,6 +206,12 @@ textarea {
 
 .nav-text-link:hover {
   color: var(--ink);
+}
+
+.nav-session {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 800;
 }
 
 .nav-cta {
@@ -505,6 +521,22 @@ textarea {
   gap: 18px;
 }
 
+.page-main {
+  min-height: 56vh;
+}
+
+.route-panel {
+  background:
+    linear-gradient(135deg, rgba(20, 89, 199, 0.08), rgba(228, 87, 46, 0.08)),
+    var(--paper);
+}
+
+.route-nav-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
 .auth-panel {
   background:
     linear-gradient(180deg, rgba(228, 87, 46, 0.04), rgba(20, 89, 199, 0.05)),
@@ -515,6 +547,16 @@ textarea {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+}
+
+.auth-session-card {
+  margin-bottom: 16px;
+}
+
+.auth-session-meta {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
 }
 
 .panel {
@@ -1186,7 +1228,8 @@ textarea {
   .career-list,
   .chat-matches,
   .jobs-chat-form,
-  .auth-grid {
+  .auth-grid,
+  .route-nav-grid {
     grid-template-columns: 1fr;
   }
 

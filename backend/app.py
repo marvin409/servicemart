@@ -4,10 +4,13 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-from flask import Flask, jsonify, request, send_from_directory
+from flask import Flask, current_app, jsonify, request, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
+from sqlalchemy.exc import IntegrityError
+from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
+from werkzeug.security import check_password_hash, generate_password_hash
 
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_IMAGE_DIR = BASE_DIR / "static" / "images"
@@ -44,6 +47,16 @@ class Config:
     RENDER_SERVICE_NAME = os.getenv("RENDER_SERVICE_NAME", "service-mart-api")
     RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL") or os.getenv("EXTERNAL_URL", "")
     FRONTEND_URL = os.getenv("FRONTEND_URL", "*")
+    AUTH_TOKEN_MAX_AGE_SECONDS = int(os.getenv("AUTH_TOKEN_MAX_AGE_SECONDS", "604800"))
+
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    full_name = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), nullable=False, unique=True, index=True)
+    password_hash = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    last_login_at = db.Column(db.DateTime, nullable=True)
 
 
 class ServiceProvider(db.Model):
@@ -143,6 +156,43 @@ def create_app():
     return app
 
 
+def get_auth_serializer():
+    return URLSafeTimedSerializer(current_app.config["SECRET_KEY"], salt="servicemart-auth")
+
+
+def sign_auth_token(user):
+    serializer = get_auth_serializer()
+    return serializer.dumps({"user_id": user.id, "email": user.email})
+
+
+def verify_auth_token(token):
+    serializer = get_auth_serializer()
+    max_age = current_app.config["AUTH_TOKEN_MAX_AGE_SECONDS"]
+    try:
+        data = serializer.loads(token, max_age=max_age)
+    except (SignatureExpired, BadSignature):
+        return None
+    return data
+
+
+def normalize_email(value):
+    return value.strip().lower()
+
+
+def is_valid_email(value):
+    return bool(re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", value))
+
+
+def get_bearer_token(auth_header):
+    if not auth_header:
+        return None
+    prefix = "Bearer "
+    if not auth_header.startswith(prefix):
+        return None
+    token = auth_header[len(prefix):].strip()
+    return token or None
+
+
 def register_routes(app):
     @app.get("/api/health")
     def health_check():
@@ -161,6 +211,69 @@ def register_routes(app):
                 },
             }
         )
+
+    @app.post("/api/auth/signup")
+    def signup():
+        payload = request.get_json(force=True, silent=True) or {}
+        full_name = payload.get("full_name", "").strip()
+        email = normalize_email(payload.get("email", ""))
+        password = payload.get("password", "")
+
+        if len(full_name) < 2:
+            return jsonify({"error": "Full name must be at least 2 characters."}), 400
+        if not is_valid_email(email):
+            return jsonify({"error": "A valid email address is required."}), 400
+        if len(password) < 8:
+            return jsonify({"error": "Password must be at least 8 characters."}), 400
+
+        user = User(
+            full_name=full_name,
+            email=email,
+            password_hash=generate_password_hash(password),
+        )
+        db.session.add(user)
+        try:
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            return jsonify({"error": "An account with that email already exists."}), 409
+
+        token = sign_auth_token(user)
+        return jsonify({"message": "Account created successfully.", "token": token, "user": user_to_dict(user)}), 201
+
+    @app.post("/api/auth/login")
+    def login():
+        payload = request.get_json(force=True, silent=True) or {}
+        email = normalize_email(payload.get("email", ""))
+        password = payload.get("password", "")
+
+        if not is_valid_email(email) or not password:
+            return jsonify({"error": "Email and password are required."}), 400
+
+        user = User.query.filter_by(email=email).first()
+        if not user or not check_password_hash(user.password_hash, password):
+            return jsonify({"error": "Invalid email or password."}), 401
+
+        user.last_login_at = datetime.utcnow()
+        db.session.commit()
+        token = sign_auth_token(user)
+        return jsonify({"message": "Login successful.", "token": token, "user": user_to_dict(user)})
+
+    @app.get("/api/auth/me")
+    def auth_me():
+        token = get_bearer_token(request.headers.get("Authorization", ""))
+        if not token:
+            return jsonify({"error": "Authorization token is required."}), 401
+
+        payload = verify_auth_token(token)
+        if not payload:
+            return jsonify({"error": "Token is invalid or expired."}), 401
+
+        user = User.query.get(payload.get("user_id"))
+        if not user or user.email != payload.get("email"):
+            return jsonify({"error": "Token is invalid."}), 401
+
+        return jsonify({"user": user_to_dict(user)})
 
     @app.get("/api/services")
     def list_services():
@@ -377,6 +490,16 @@ def job_to_dict(job):
         "apply_url": job.apply_url,
         "is_featured": job.is_featured,
         "created_at": job.created_at.isoformat(),
+    }
+
+
+def user_to_dict(user):
+    return {
+        "id": user.id,
+        "full_name": user.full_name,
+        "email": user.email,
+        "created_at": user.created_at.isoformat(),
+        "last_login_at": user.last_login_at.isoformat() if user.last_login_at else None,
     }
 
 

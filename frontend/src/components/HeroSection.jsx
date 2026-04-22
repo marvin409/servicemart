@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Stat({ value, label }) {
   return (
     <div className="stat-card">
@@ -8,7 +10,8 @@ function Stat({ value, label }) {
 }
 
 function HeroSection({ careersCount, employerUrl, providerCount, labels }) {
-  const careersHref = employerUrl || "#careers";
+  const careersHref = employerUrl || "/careers";
+  const isExternalCareers = Boolean(employerUrl);
 
   return (
     <section className="hero" id="top">
@@ -19,12 +22,12 @@ function HeroSection({ careersCount, employerUrl, providerCount, labels }) {
           {labels.heroSubtitle}
         </p>
         <div className="hero-actions">
-          <a href="#discover" className="button primary">Discover services</a>
+          <Link to="/marketplace" className="button primary">Discover services</Link>
           <a
             href={careersHref}
             className="button secondary"
-            target={employerUrl ? "_blank" : undefined}
-            rel={employerUrl ? "noreferrer" : undefined}
+            target={isExternalCareers ? "_blank" : undefined}
+            rel={isExternalCareers ? "noreferrer" : undefined}
           >
             Employer careers
           </a>
