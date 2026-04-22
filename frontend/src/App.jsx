@@ -12,7 +12,8 @@ import AuthSection from "./components/AuthSection";
 import ToastStack from "./components/ToastStack";
 
 const defaultCoords = { lat: -1.286389, lng: 36.817223 };
-const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
+const inferredApiBaseUrl = "https://servicemart.alwaysdata.net";
+const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || inferredApiBaseUrl).replace(/\/$/, "");
 
 const languageCopy = {
   en: {

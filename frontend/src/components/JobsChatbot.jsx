@@ -170,7 +170,7 @@ function buildReply(input, careers, premiumFee) {
     };
   }
 
-  if (query.includes("best") || query.includes("top")) {
+  if (query.includes("best jobs") || query.includes("top")) {
     return {
       text: "These are the strongest highlighted openings based on the current marketplace list.",
       matches: roles.slice(0, 3)
